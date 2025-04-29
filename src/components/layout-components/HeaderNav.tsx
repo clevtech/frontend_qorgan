@@ -130,7 +130,7 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 					</div>
 					<h1 style={{ margin: 0, padding: 0 }}>Beren Qorgan Antidrone</h1>
 					<div className='nav-right'>
-						<NavProfile data={title} />
+						{/* <NavProfile data={title} /> */}
 					</div>
 				</div>
 			</div>

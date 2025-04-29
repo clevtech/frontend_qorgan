@@ -3,9 +3,7 @@ import { Logo } from '@/components/layout-components/Logo'
 import { Card, Col, Row } from 'antd'
 
 const backgroundStyle = {
-	backgroundImage: 'url(/images/background_image_purple_lite.png)',
-	backgroundRepeat: 'no-repeat',
-	backgroundSize: 'cover',
+	backgroundColor: '#0070C0'
 }
 
 const SignIn = () => {

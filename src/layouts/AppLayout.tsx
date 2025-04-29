@@ -273,7 +273,7 @@ const AppLayout = connect(mapStateToProps)((props: Props) => {
                     {isNavTop && !isMobile ? <TopNav routeInfo={currentRouteInfo} /> : null}
                     <Layout className='app-container'>
                         {/* {isNavSide && !isMobile ? <SideNav routeInfo={currentRouteInfo} /> : null} */}
-                        <Layout className='app-layout' style={getLayoutDirectionGutter()}>
+                        <Layout className='app-layout'>
                             <div className={`app-content ${isNavTop ? 'layout-top-nav' : ''}`}>
                                 <Layout.Content>
                                     <Suspense fallback={<Loading cover='content' />}>{props.children}</Suspense>

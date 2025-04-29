@@ -19,7 +19,7 @@ export const WEBSOCKET_BASE_URL = `ws://${IP_ADDRESS}/ws`
 export const APP_PREFIX_PATH = '/app'
 export const AUTH_PREFIX_PATH = '/auth'
 
-export const AUTHENTICATED_ENTRY = `${APP_PREFIX_PATH}/cameras`
+export const AUTHENTICATED_ENTRY = `${APP_PREFIX_PATH}/incidents`
 export const UNAUTHENTICATED_ENTRY = '/sign-in'
 
 export const REDIRECT_URL_KEY = 'redirect'
