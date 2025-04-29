@@ -1,0 +1,22 @@
+@import './styles/variables/_colors.less';
+@import './styles/components/feedback/_spin.less';
+
+.loading {
+	.ant-spin {
+		color: @primary-color;
+	}
+}
+
+/* Перезаписать все кнопки antd */
+
+/* Перезаписать border-radius для input и select */
+.ant-btn,
+.ant-input,
+.ant-select-selector {
+	border-radius: 1rem !important;
+}
+
+/* Перезаписать border-radius для Radio.Group */
+.ant-radio-group {
+    border-radius: 1rem !important;
+  }

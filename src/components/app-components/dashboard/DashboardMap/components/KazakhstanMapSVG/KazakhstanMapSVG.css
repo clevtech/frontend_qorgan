@@ -1,0 +1,302 @@
+/* @import '~leaflet/dist/leaflet.css'; */
+/* Reset antd styles */
+* .ant-card,
+* .ant-card-head,
+* .ant-card-body,
+* .ant-card-head-title,
+* .ant-card-head-wrapper,
+* .ant-modal-body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Default styles for antd cards */
+.mo-app .ant-card {
+    border-radius: 10px;
+}
+
+/* border radius styles */
+.mo-app .bordered-radius {
+    border-radius: 10px;
+}
+
+/* Container styles */
+.mo-app .container {
+    display: grid;
+}
+
+.mo-app .align-center {
+    display: flex;
+    align-content: center;
+}
+.mo-app .justify-center {
+    display: flex;
+    justify-content: center;
+}
+.mo-app .container-center {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+.mo-app .container-gap-8 {
+    display: grid;
+    gap: 8px;
+}
+
+.mo-app .container-gap-12 {
+    display: grid;
+    gap: 8px;
+}
+
+.mo-app .container-gap-16 {
+    display: grid;
+    gap: 16px;
+}
+
+.mo-app .container-gap-24 {
+    display: grid;
+    gap: 24px;
+}
+
+.mo-app .container-gap-32 {
+    display: grid;
+    gap: 32px;
+}
+
+.mo-app .container-gap-48 {
+    display: grid;
+    gap: 48px;
+}
+
+.mo-app .container-gap-24-16 {
+    display: grid;
+    row-gap: 16px;
+    column-gap: 24px;
+}
+
+.mo-app .container-column-1-1 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.mo-app .container-column-1-auto {
+    display: grid;
+    grid-template-columns: 1fr auto;
+}
+
+.mo-app .container-column-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+
+.mo-app .container-column-1-1-1-1 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.mo-app .align-center {
+    display: grid;
+    align-items: center;
+}
+
+.mo-app .justify-center {
+    display: grid;
+    justify-items: center;
+}
+
+/* Padding styles */
+* .sidePadding24 {
+    padding: 0 24px;
+}
+
+* .sidePadding20 {
+    padding: 0 20px;
+}
+
+* .padding24-32 {
+    padding: 24px 32px;
+}
+
+* .padding16-32 {
+    padding: 16px 32px !important;
+}
+* .padding6-12 {
+    padding: 6px 12px;
+}
+
+* .padding16-24 {
+    padding: 16px 24px;
+}
+
+* .padding20 {
+    padding: 20px;
+}
+
+* .padding24 {
+    padding: 24px;
+}
+
+/* Fixes for unknown problem  */
+
+.ant-space.ant-space-vertical.fixGap0 {
+    gap: 0 !important;
+}
+
+/* Map styles  */
+.region {
+    pointer-events: auto !important;
+    fill: rgba(0, 74, 170, 0.063);
+}
+.region:hover {
+    fill: #ffffff55;
+}
+.region.activeRegion {
+    fill: #0552b5;
+}
+.markerIcon {
+    mix-blend-mode: multiply;
+}
+.marker {
+    fill: #29cc6a;
+    z-index: 1001;
+}
+/* Bullet chart section  */
+
+.mo-app .bulletChartContainer .bulletTextEnding {
+    color: #72849a;
+    font-size: 17px;
+    font-family: Roboto;
+}
+.mo-app .bulletChartContainer .bullet {
+    height: 24px;
+}
+.mo-app .bulletChartContainer .left-item {
+    border-radius: 10px 0 0 10px;
+}
+.mo-app .bulletChartContainer .right-item {
+    border-radius: 0 10px 10px 0;
+}
+.mo-app .w-400 {
+    font-family: Roboto;
+    font-weight: 400;
+}
+.mo-app .w-500 {
+    font-family: Roboto;
+    font-weight: 500;
+}
+.mo-app .w-700 {
+    font-family: Roboto;
+    font-weight: 700;
+}
+.mo-app .fz-24 {
+    font-family: Roboto;
+    font-size: 24px;
+}
+.mo-app .fz-20 {
+    font-family: Roboto;
+    font-size: 20px;
+}
+.mo-app .fz-19 {
+    font-family: Roboto;
+    font-size: 19px;
+}
+.mo-app .fz-17 {
+    font-family: Roboto;
+    font-size: 17px;
+}
+.mo-app .fz-16 {
+    font-family: Roboto;
+    font-size: 16px;
+}
+.mo-app .fz-14 {
+    font-family: Roboto;
+    font-size: 14px;
+}
+.mo-app .text-black-53 {
+    color: #1a3353;
+}
+.mo-app .text-gray-49A {
+    color: #72849a;
+}
+.mo-app .text-gray-60 {
+    color: #455560;
+}
+.mo-app .custom-barchart-label {
+    font-size: 12px;
+    font-weight: 400;
+    font-family: 'PingFang SC';
+    color: #8c8c8c;
+}
+.mo-app .custom-barchart-bar-text {
+    font-size: 12px;
+    font-weight: 400;
+    font-family: 'PingFang SC';
+    color: #333333;
+}
+
+.mo-app .ant-tabs-nav {
+    background-color: white;
+    width: calc(100% + 50px);
+    margin: -25px 0 0 -25px;
+}
+* .ant-table-tbody > tr > td,
+* .ant-table-thead > tr > th {
+    padding: 12px;
+}
+* .custom-table-cell {
+    padding: 12px 0;
+}
+.collapse-content {
+    transition: max-height 0.3s ease-in-out;
+}
+
+.rotate-down {
+    transform: rotate(0deg);
+    transition: transform 0.3s ease-in-out;
+}
+
+.rotate-up {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-in-out;
+}
+.leaflet-control-attribution.leaflet-control {
+    display: none;
+}
+
+.ant-row.OverallMapCardOverflow::-webkit-scrollbar {
+    width: 10px;
+}
+.ant-row.OverallMapCardOverflow::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+.ant-row.OverallMapCardOverflow::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+.ant-row.OverallMapCardOverflow::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.groupedCluster {
+    background-image: url('./../assets/MD.png');
+    background-size: cover;
+}
+.smsMailingsTable tr > td {
+    padding: 20px 10px;
+}
+
+.smsMailingsTable .ant-table-body::-webkit-scrollbar {
+    width: 12px;
+}
+.smsMailingsTable .ant-table-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+.smsMailingsTable .ant-table-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+.smsMailingsTable .ant-table-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
