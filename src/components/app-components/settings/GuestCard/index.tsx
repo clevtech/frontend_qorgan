@@ -93,19 +93,19 @@ const GuestCard = () => {
 	};
 
 
-	useEffect(() => {
-		fetch({
-			url: '/global/me',
-			method: HttpMethods.GET,
-		})
-			.then(res => {
-				if (res.status === 200) {
-					setMe(res.data)
-					localStorage.setItem('organization_name', `${res?.data.name}`)
-				}
-			})
-			.catch(e => console.log(e))
-	}, [])
+	// useEffect(() => {
+	// 	fetch({
+	// 		url: '/global/me',
+	// 		method: HttpMethods.GET,
+	// 	})
+	// 		.then(res => {
+	// 			if (res.status === 200) {
+	// 				setMe(res.data)
+	// 				localStorage.setItem('organization_name', `${res?.data.name}`)
+	// 			}
+	// 		})
+	// 		.catch(() => localStorage.setItem('organization_name', `1234`))
+	// }, [])
 
 	const fetchDataSource = useCallback(async () => {
 		setIsLoading(true)
@@ -157,7 +157,7 @@ const GuestCard = () => {
 						localStorage.setItem('organization_name', `${res?.data.name}`);
 					}
 				})
-				.catch(e => console.error('Ошибка:', e));
+				.catch(e => localStorage.setItem('organization_name', `1234`));
 
 			return;
 		}

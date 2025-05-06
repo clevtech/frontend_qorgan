@@ -49,25 +49,25 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 		setSearchActive(false)
 	}
 
-	useEffect(() => {
-		axios
-			.get(API_BASE_URL + '/global/me', {
-				headers: {
-					Authorization: localStorage.getItem(ACCESS_TOKEN)
-						? `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`
-						: undefined,
-				},
-			})
-			.then(res => {
-				if (res.status == 200) {
-					setTitle(res.data)
-					localStorage.setItem('organization_name', `${res?.data.name}`)
-					localStorage.setItem('me', `${res.data.ip_addr}`)
-					localStorage.setItem('selected', `${res.data.ip_addr}`)
-				}
-			})
-			.catch(e => console.log(e))
-	}, [location.pathname])
+	// useEffect(() => {
+	// 	axios
+	// 		.get(API_BASE_URL + '/global/me', {
+	// 			headers: {
+	// 				Authorization: localStorage.getItem(ACCESS_TOKEN)
+	// 					? `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`
+	// 					: undefined,
+	// 			},
+	// 		})
+	// 		.then(res => {
+	// 			if (res.status == 200) {
+	// 				setTitle(res.data)
+	// 				localStorage.setItem('organization_name', `${res?.data.name}`)
+	// 				localStorage.setItem('me', `${res.data.ip_addr}`)
+	// 				localStorage.setItem('selected', `${res.data.ip_addr}`)
+	// 			}
+	// 		})
+	// 		.catch(e => console.log(e))
+	// }, [location.pathname])
 
 	const onToggle = () => {
 		if (!isMobile) {
