@@ -95,8 +95,8 @@ const Incidents = () => {
 				key: 'detection',
 				title: 'Сектор',
 				width: '25%',
-				render: (text: string | null) => (
-					<span>{text ? text : 'Отсутствует'}</span>
+				render: (text: any) => (
+					<span>{`${text}`}</span>
 				),
 			},
 			{
