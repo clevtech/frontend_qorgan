@@ -272,11 +272,11 @@ const Incidents = () => {
 										fill={getFillColor(3)}
 									/>
 								)}
-								{renderModuleTooltip(2,
+								{renderModuleTooltip(1,
 									<path
 										id='module4'
 										d='M83.2881 55.022C79.1387 49.8207 81.1313 42.0932 87.2785 39.5469L170.582 5.0415C176.697 2.50852 183.542 6.50849 184.336 13.0796L192.603 81.427C193.141 85.8815 190.647 90.1494 186.502 91.8665L137.968 111.97C133.851 113.675 129.103 112.451 126.324 108.967L83.2881 55.022Z'
-										fill={getFillColor(2)}
+										fill={getFillColor(1)}
 									/>
 								)}
 								{renderModuleTooltip(0,
