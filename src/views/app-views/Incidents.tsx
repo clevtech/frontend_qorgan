@@ -33,7 +33,7 @@ const Incidents = () => {
 		{ direction: number; status: number }[]
 	>([])
 
-	const { lastMessage } = useWebSocket('ws://192.168.1.144/ws/statuses/', {
+	const { lastMessage } = useWebSocket(`ws://${window.location.hostname}/ws/statuses/`, {
 		onOpen: () => console.log('WebSocket connection opened'),
 		onClose: () => console.log('WebSocket connection closed'),
 		onError: event => console.error('WebSocket error:', event),
