@@ -1,7 +1,7 @@
 import { Layout } from 'antd'
 import { FC, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 
 import { Logo } from '@/components/layout-components/Logo'
 import { NavProfile } from '@/components/layout-components/NavProfile'
@@ -71,7 +71,7 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 
 	const onToggle = () => {
 		if (!isMobile) {
-			dispatch(onNavCollapsedChange(!navCollapsed))
+			    dispatch(onNavCollapsedChange(!navCollapsed))
 		} else {
 			dispatch(onMobileNavChange(!mobileNav))
 		}
@@ -107,6 +107,8 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 		}
 	})
 
+	console.log(location.pathname)
+
 	return (
 		<Header
 			className={`app-header ${navMode}`}
@@ -128,7 +130,29 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 							)} */}
 						</div>
 					</div>
-					<h1 style={{ margin: 0, padding: 0 }}>Beren Qorgan Antidrone</h1>
+							<h1 style={{ margin: 0, padding: 0, position: 'absolute', left: 16 }}>Beren Qorgan Antidrone</h1>
+					<div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flex: 1 }}>
+						<Link
+							to="/app/map"
+							style={{
+								fontSize: '1.2rem',
+								fontWeight: 500,
+								color: location.pathname === '/app/map' ? '#1890ff' : '#000',
+							}}
+						>
+							Карта
+						</Link>
+						<Link
+							to="/app/incidents"
+							style={{
+								fontSize: '1.2rem',
+								fontWeight: 500,
+								color: location.pathname === '/app/incidents' ? '#1890ff' : '#000',
+							}}
+						>
+							Инциденты
+						</Link>
+					</div>
 					<div className='nav-right'>
 						{/* <NavProfile data={title} /> */}
 					</div>
