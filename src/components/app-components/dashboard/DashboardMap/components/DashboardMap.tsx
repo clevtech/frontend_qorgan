@@ -1,15 +1,29 @@
+import drone from '@/assets/drone.png'
 import 'leaflet/dist/leaflet.css'
+import { useEffect, useState } from 'react'
 import { MapContainer, SVGOverlay, TileLayer } from 'react-leaflet'
-import {
-	boundsKazakhstan,
-	centerKazakhstan,
-	tileLayerUrl,
-} from '../constants/mapConstants'
-import { groupedData } from '../constants/markers'
-import KazakhstanMapSVG from './KazakhstanMapSVG/KazakhstanMapSVG'
-import { MapMarker } from './MapMarker/MapMarker'
+import { centerKazakhstan, tileLayerUrl } from '../constants/mapConstants'
 
-export const DashboardMap = ({ data = [], zoom = 4, heigth = 370 }) => {
+import useWebSocket from 'react-use-websocket'
+
+export const DashboardMap = (props: any) => {
+	const [socketUrl, setSocketUrl] = useState(
+		props.switched
+			? `ws://${window.location.hostname}:8080/ws/statuses_demo/`
+			: `ws://${window.location.hostname}:8080/ws/statuses/`
+	)
+	const [boundsKazakhstan, setBoundsKazakhstan] = useState<
+		[[number, number], [number, number]]
+	>([
+		[centerKazakhstan.lat - 0.09, centerKazakhstan.lng - 0.15],
+		[centerKazakhstan.lat + 0.2233333, centerKazakhstan.lng + 0.1492341],
+	])
+	const { data = [], zoom = 4, heigth = 870 } = props
+	const [modules, setModules] = useState<any>([])
+
+
+
+	const [moduleStates, setModuleStates] = useState<any>({})
 
 	let groupedData1 = data.map(item => {
 		return {
@@ -18,23 +32,200 @@ export const DashboardMap = ({ data = [], zoom = 4, heigth = 370 }) => {
 			url: 'http://' + item.ip_addr,
 		}
 	})
+
+	useEffect(() => {
+		setSocketUrl(
+			props.switched
+				? `ws://${window.location.hostname}:8080/ws/statuses_demo/`
+				: `ws://${window.location.hostname}:8080/ws/statuses/`
+		)
+	}, [props.switched])
+
+	const { lastMessage } = useWebSocket(socketUrl, {
+		onOpen: () => console.log('WebSocket connection opened'),
+		onClose: () => console.log('WebSocket connection closed'),
+		onError: event => console.error('WebSocket error:', event),
+		shouldReconnect: () => true,
+		reconnectAttempts: 10,
+		reconnectInterval: 3000,
+	})
+
+	useEffect(() => {
+		if (lastMessage?.data) {
+			try {
+				const incoming = JSON.parse(lastMessage.data)
+				setModuleStates(incoming.statuses)
+			} catch (err) {
+				console.error('Ошибка при парсинге WebSocket-сообщения:', err)
+			}
+		}
+	}, [lastMessage])
+
+	const renderModuleTooltip = (direction: number, pathElement: JSX.Element) => {
+		const module = modules.find((m: any) => m.direction === direction)
+
+		// Центр SVG, соответствующий centerKazakhstan
+		const centerX = 233
+		const centerY = 242
+
+		const textLabel = module ? (
+			<text
+				x={centerX}
+				y={centerY + direction * 15}
+				fontSize="8"
+				fill="white"
+				stroke="black"
+				strokeWidth="0.5"
+				textAnchor="middle"
+			>
+				{module.name}
+			</text>
+		) : null
+
+		return (
+			<g>
+				{pathElement}
+				{textLabel}
+			</g>
+		)
+	}
+
+	const getFillColor = (direction: number) => {
+		const found = moduleStates?.statuses?.find((m: any) => m.direction === direction)
+		if (!found) return '#AAC5FF'
+		if (found.status === 1) return '#D63604'
+		if (found.status === 0) return '#407BFF'
+		return '#AAC5FF'
+	}
+
+	const renderDrone = (distance: number, direction: number) => {
+		const centerX = 233
+		const centerY = 242
+		const maxRadius = 238
+
+		const t = distance / 1000
+		const r = t * maxRadius
+
+		const angleByDirection: Record<number, number> = {
+			0: 25,
+			1: 68,
+			2: 113,
+			3: 156,
+		}
+
+		const angle = angleByDirection[direction] ?? 0
+		const rad = (angle * Math.PI) / 180
+		const x = centerX + r * Math.cos(rad)
+		const y = centerY + r * Math.sin(rad)
+
+		return (
+			<>
+				<text
+					x={x + 10}
+					y={y - 5}
+					fontSize='5'
+					fill='black'
+					stroke='black'
+					strokeWidth='0.4'
+					textAnchor='middle'
+				>
+					БПЛА: {distance}
+				</text>
+				<image href={drone} x={x} y={y} width='20' height='20' />
+			</>
+		)
+	}
+
+	console.log(props.switched)
+
 	return (
-		<MapContainer
-			bounds={boundsKazakhstan}
-			center={centerKazakhstan}
-			zoom={zoom}
-			minZoom={4}
-			maxBounds={boundsKazakhstan}
-			maxBoundsViscosity={1.0}
-			style={{ height: `${heigth}px`, borderRadius: 10, background: '#fff' }}
-		>
-			<TileLayer url={tileLayerUrl} opacity={0} />
-			<SVGOverlay bounds={boundsKazakhstan}>
-				<KazakhstanMapSVG />
-			</SVGOverlay>
-			<div>
-				{groupedData1?.map(data => <MapMarker key={data.url} data={data} />)}
-			</div>
-		</MapContainer>
+		<div style={{ position: 'relative' }}>
+			<MapContainer
+				// bounds={boundsKazakhstan}
+				center={centerKazakhstan}
+				zoom={zoom}
+				minZoom={14}
+				maxBounds={boundsKazakhstan}
+				maxBoundsViscosity={0}
+				zoom={false}
+				style={{ height: `${heigth}px`, borderRadius: 10 }}
+			>
+				<TileLayer url={tileLayerUrl} opacity={1} />
+				<SVGOverlay
+					bounds={[
+						[centerKazakhstan.lat - 0.075, centerKazakhstan.lng - 0.075],
+						[centerKazakhstan.lat + 0.075, centerKazakhstan.lng + 0.075],
+					]}
+				>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						viewBox='0 0 484.188 495.572'
+						style={{ transform: 'scale(0.3) rotate(-73deg)', transformOrigin: 'center', pointerEvents: 'auto' }}
+					>
+						{renderModuleTooltip(
+							3,
+							<path
+								d='M 242.832 419.064 C 242.832 356.993 219.006 297.291 176.269 252.271 L 0.573 419.064 L 242.832 419.064 Z'
+								fill={getFillColor(3)}
+								fillOpacity={0.41}
+								style={{
+									strokeWidth: 1,
+									transformOrigin: '121.703px 335.667px 0px',
+									pointerEvents: 'auto',
+								}}
+								transform='matrix(-1, 0, 0, -1, 0, 0)'
+							/>
+						)}
+						{renderModuleTooltip(
+							2,
+							<path
+								d='M 242.832 323.106 C 199.266 279.538 140.728 254.207 79.142 252.271 L 71.532 494.409 L 242.832 323.106 Z'
+								fill={getFillColor(2)}
+								fillOpacity={0.41}
+								style={{
+									strokeWidth: 1,
+									transformOrigin: '157.183px 373.339px 0px',
+									pointerEvents: 'auto',
+								}}
+								transform='matrix(-1, 0, 0, -1, 0, 0)'
+							/>
+						)}
+						{renderModuleTooltip(
+							1,
+							<path
+								d='M 408.667 252.271 C 347.053 252.271 287.747 275.75 242.831 317.93 L 408.667 494.528 L 408.667 252.271 Z'
+								fill={getFillColor(1)}
+								fillOpacity={0.41}
+								style={{
+									strokeWidth: 1,
+									transformOrigin: '325.75px 373.399px 0px',
+									pointerEvents: 'auto',
+								}}
+								transform='matrix(-1, 0, 0, -1, 0, 0)'
+							/>
+						)}
+						{renderModuleTooltip(
+							0,
+							<path
+								d='M 313.674 252.273 C 270.104 295.844 244.771 354.378 242.832 415.966 L 484.974 423.576 L 313.674 252.273 Z'
+								fill={getFillColor(0)}
+								fillOpacity={0.41}
+								style={{
+									strokeWidth: 1,
+									transformOrigin: '363.903px 337.923px 0px',
+									pointerEvents: 'auto',
+								}}
+								transform='matrix(-1, 0, 0, -1, 0, 0)'
+							/>
+						)}
+						{moduleStates?.statuses?.map((mod: any, i: number) =>
+							mod.distance != undefined && mod.status === 1
+								? renderDrone(mod.distance, mod.direction)
+								: null
+						)}
+					</svg>
+				</SVGOverlay>
+			</MapContainer>
+		</div>
 	)
 }
