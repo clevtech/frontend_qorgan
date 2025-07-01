@@ -19,7 +19,6 @@ import {
 } from '@/store/slices/themeSlice'
 
 import { API_BASE_URL } from '@/configs/AppConfig'
-import logo from '@/images/logo.png'
 import utils from '@/utils'
 import axios from 'axios'
 import notext from '../../../public/images/notext.png'
@@ -115,7 +114,7 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 			style={{ backgroundColor: headerNavColor }}
 		>
 			<div className={`app-header-wrapper ${isNavTop ? 'layout-top-nav' : ''}`}>
-				<Logo src={navCollapsed ? notext : logo} />
+				<Logo src={navCollapsed ? notext : '###'} />
 				<div className='nav' style={{ width: `calc(100% - ${getNavWidth()})`, display: 'flex', alignItems: 'center' }}>
 					<div className='nav-left'>
 						{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
