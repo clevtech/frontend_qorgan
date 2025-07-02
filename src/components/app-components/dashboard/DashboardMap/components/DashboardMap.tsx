@@ -147,10 +147,10 @@ export const DashboardMap = (props: any) => {
 				minZoom={14}
 				maxBounds={boundsKazakhstan}
 				maxBoundsViscosity={0}
-				zoom={false}
+				// zoom={false}
 				style={{ height: `${heigth}px`, borderRadius: 10 }}
 			>
-				<TileLayer url={tileLayerUrl} opacity={1} />
+				<TileLayer url="../../../../../public/tiles/{z}/{x}/{y}.png" opacity={1} />
 				<SVGOverlay
 					bounds={[
 						[centerKazakhstan.lat - 0.075, centerKazakhstan.lng - 0.075],
