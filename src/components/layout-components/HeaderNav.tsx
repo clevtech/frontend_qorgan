@@ -153,7 +153,7 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 						</Link>
 					</div>
 					<div className='nav-right'>
-						{/* <NavProfile data={title} /> */}
+						<NavProfile data={title} />
 					</div>
 				</div>
 			</div>

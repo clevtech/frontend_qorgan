@@ -1,9 +1,9 @@
-import axios from 'axios'
-import { notification } from 'antd'
 import { API_BASE_URL } from '@/configs/AppConfig'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/AuthConstant'
-import { onSignOut, refreshToken } from '@/store/slices/authSlice'
 import { store } from '@/store'
+import { onSignOut, refreshToken } from '@/store/slices/authSlice'
+import { notification } from 'antd'
+import axios from 'axios'
 
 const TOKEN_PAYLOAD_KEY = 'Authorization'
 
@@ -16,7 +16,7 @@ let isRefreshing = false
 let failedQueue: any[] = [] // Очередь запросов, ожидающих новый токен
 
 const processQueue = (error: any, token: string | null = null) => {
-	failedQueue.forEach((prom) => {
+	failedQueue.forEach(prom => {
 		if (token) {
 			prom.resolve(token)
 		} else {
@@ -27,14 +27,14 @@ const processQueue = (error: any, token: string | null = null) => {
 }
 
 service.interceptors.request.use(
-	(config) => {
+	config => {
 		const access_token = localStorage.getItem(ACCESS_TOKEN)
 		if (access_token) {
 			config.headers[TOKEN_PAYLOAD_KEY] = `Bearer ${access_token}`
 		}
 		return config
 	},
-	(error) => {
+	error => {
 		notification.error({
 			message: 'Ошибка при отправке запроса',
 			description: error.message,
@@ -44,8 +44,8 @@ service.interceptors.request.use(
 )
 
 service.interceptors.response.use(
-	(response) => response,
-	async (error) => {
+	response => response,
+	async error => {
 		const originalRequest = error.config
 		const status = error.response?.status
 
@@ -67,11 +67,11 @@ service.interceptors.response.use(
 				return new Promise((resolve, reject) => {
 					failedQueue.push({ resolve, reject })
 				})
-					.then((token) => {
+					.then(token => {
 						originalRequest.headers[TOKEN_PAYLOAD_KEY] = `Bearer ${token}`
 						return service(originalRequest)
 					})
-					.catch((err) => Promise.reject(err))
+					.catch(err => Promise.reject(err))
 			}
 
 			isRefreshing = true
@@ -89,9 +89,13 @@ service.interceptors.response.use(
 
 				if (new_access_token) {
 					localStorage.setItem(ACCESS_TOKEN, new_access_token)
-					axios.defaults.headers.common[TOKEN_PAYLOAD_KEY] = `Bearer ${new_access_token}`
-					originalRequest.headers[TOKEN_PAYLOAD_KEY] = `Bearer ${new_access_token}`
-					
+					axios.defaults.headers.common[
+						TOKEN_PAYLOAD_KEY
+					] = `Bearer ${new_access_token}`
+					originalRequest.headers[
+						TOKEN_PAYLOAD_KEY
+					] = `Bearer ${new_access_token}`
+
 					// Обрабатываем очередь запросов
 					processQueue(null, new_access_token)
 					return service(originalRequest)
@@ -111,7 +115,8 @@ service.interceptors.response.use(
 
 		notification.error({
 			message: 'Ошибка при получении ответа',
-			description: error.response?.data?.message || 'Не удалось загрузить данные',
+			description:
+				error.response?.data?.message || 'Не удалось загрузить данные',
 		})
 
 		return Promise.reject(error)

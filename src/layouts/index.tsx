@@ -15,6 +15,7 @@ export const Layouts = memo(() => {
 
 	const Layout = access_token && !blankLayout ? AppLayout : AuthLayout
 
+
 	return (
 		<Suspense fallback={<Spin />}>
 			<Layout>
