@@ -61,7 +61,7 @@ const Incidents = () => {
 
 	const { lastMessage } = useWebSocket(
 		// `ws://${window.location.hostname}:8080/ws/statuses/`,
-		`ws://${window.location.hostname}:8080/ws/statuses/`,
+		`wss://${window.location.hostname}:8080/ws/statuses/`,
 		{
 			onOpen: () => console.log('WebSocket connection opened'),
 			onClose: () => console.log('WebSocket connection closed'),

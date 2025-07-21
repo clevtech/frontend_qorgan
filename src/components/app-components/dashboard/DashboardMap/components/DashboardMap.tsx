@@ -9,8 +9,8 @@ import useWebSocket from 'react-use-websocket'
 export const DashboardMap = (props: any) => {
 	const [socketUrl, setSocketUrl] = useState(
 		props.switched
-			? `ws://${window.location.hostname}:8080/ws/statuses_demo/`
-			: `ws://${window.location.hostname}:8080/ws/statuses/`
+			? `wss://${window.location.hostname}:8080/ws/statuses_demo/`
+			: `wss://${window.location.hostname}:8080/ws/statuses/`
 	)
 	const [boundsKazakhstan, setBoundsKazakhstan] = useState<
 		[[number, number], [number, number]]
@@ -36,8 +36,8 @@ export const DashboardMap = (props: any) => {
 	useEffect(() => {
 		setSocketUrl(
 			props.switched
-				? `ws://${window.location.hostname}:8080/ws/statuses_demo/`
-				: `ws://${window.location.hostname}:8080/ws/statuses/`
+				? `wss://${window.location.hostname}:8080/ws/statuses_demo/`
+				: `wss://${window.location.hostname}:8080/ws/statuses/`
 		)
 	}, [props.switched])
 

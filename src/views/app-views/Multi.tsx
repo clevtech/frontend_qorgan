@@ -101,7 +101,7 @@ const Multi = () => {
 	)
 
 	const { sendMessage, lastMessage, readyState } = useWebSocket(
-		`ws://${localStorage.getItem('selected')}8080/ws?name=${
+		`wss://${localStorage.getItem('selected')}8080/ws?name=${
 			currentPath.pathname.split('/')[2]
 		}`,
 		{
