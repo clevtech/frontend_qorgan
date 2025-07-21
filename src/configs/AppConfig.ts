@@ -10,7 +10,7 @@ export const IP_ADDRESS = window.location.hostname + ':8008'
 
 export const APP_NAME = 'UmAI Army Safety'
 
-export const API_BASE_URL = 'http://' + window.location.hostname + ':8080'
+export const API_BASE_URL = 'https://' + window.location.hostname + ':443'
 
 // export const API_BASE_URL = 'http://192.168.1.249:8080'
 
