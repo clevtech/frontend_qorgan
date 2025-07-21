@@ -9,8 +9,8 @@ import useWebSocket from 'react-use-websocket'
 export const DashboardMap = (props: any) => {
 	const [socketUrl, setSocketUrl] = useState(
 		props.switched
-			? `wss://${window.location.hostname}:8080/ws/statuses_demo/`
-			: `wss://${window.location.hostname}:8080/ws/statuses/`
+			? `wss://${window.location.hostname}/backend/ws/statuses_demo/`
+			: `wss://${window.location.hostname}/backend/ws/statuses/`
 	)
 	const [boundsKazakhstan, setBoundsKazakhstan] = useState<
 		[[number, number], [number, number]]
@@ -36,8 +36,8 @@ export const DashboardMap = (props: any) => {
 	useEffect(() => {
 		setSocketUrl(
 			props.switched
-				? `wss://${window.location.hostname}:8080/ws/statuses_demo/`
-				: `wss://${window.location.hostname}:8080/ws/statuses/`
+				? `wss://${window.location.hostname}/backend/ws/statuses_demo/`
+				: `wss://${window.location.hostname}/backend/ws/statuses/`
 		)
 	}, [props.switched])
 
@@ -150,7 +150,7 @@ export const DashboardMap = (props: any) => {
 				// zoom={false}
 				style={{ height: `${heigth}px`, borderRadius: 10 }}
 			>
-				<TileLayer url="../../../../../public/tiles/{z}/{x}/{y}.png" opacity={1} />
+				<TileLayer url="/tiles/{z}/{x}/{y}.png" opacity={1} />
 				<SVGOverlay
 					bounds={[
 						[centerKazakhstan.lat - 0.075, centerKazakhstan.lng - 0.075],
