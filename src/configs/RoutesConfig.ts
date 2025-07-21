@@ -8,6 +8,11 @@ export const publicRoutes = [
 		path: `${AUTH_PREFIX_PATH}/sign-in`,
 		component: lazy(() => import('@/views/auth-views/SignIn')),
 	},
+	{
+		key: 'reg-2fa',
+		path: `${AUTH_PREFIX_PATH}/reg-2fa`,
+		component: lazy(() => import('@/views/auth-views/Register2FA')),
+	},	
 ]
 
 export const protectedRoutes = [

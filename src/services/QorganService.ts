@@ -4,26 +4,26 @@ import { HttpMethods } from '@/types/custom'
 export const QorganService = {
 	getAuto: () =>
 		fetch({
-			url: `/auto/`,
+			url: `/backend/auto/`,
 			method: HttpMethods.POST,
 		}),
 
 	getOff: () => {
 		return fetch({
-			url: `/off/`,
+			url: `/backend/off/`,
 			method: HttpMethods.POST,
 		})
 	},
 	getOn: () => {
 		return fetch({
-			url: `/on/`,
+			url: `/backend/on/`,
 			method: HttpMethods.POST,
 		})
 	},
 
 	getDetections: (params: any) => {
 		return fetch({
-			url: `/detections/`,
+			url: `/backend/detections/`,
 			method: HttpMethods.GET,
 			params: params,
 		})
@@ -31,7 +31,7 @@ export const QorganService = {
 
 	getModules: (params: any) => {
 		return fetch({
-			url: `/modules/`,
+			url: `/backend/modules/`,
 			method: HttpMethods.GET,
 			params: params,
 		})

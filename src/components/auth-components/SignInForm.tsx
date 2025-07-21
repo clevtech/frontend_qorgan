@@ -1,184 +1,169 @@
-import { Alert, Button, Form, Input } from 'antd'
-import { motion } from 'framer-motion'
-import { useEffect } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { Alert, Button, Form, Input, message } from 'antd';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { ConnectedProps, connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { AuthService } from '@/services/AuthService'
 
-import { LockOutlined, LoginOutlined, MailOutlined } from '@ant-design/icons'
 
-import { RootState } from '@/store'
-import {
-	onHideAuthMessage,
-	onLoading,
-	onShowAuthMessage,
-	signIn,
-} from '@/store/slices/authSlice'
+import { LockOutlined, MailOutlined } from '@ant-design/icons';
+
+import { RootState } from '@/store';
+import { onHideAuthMessage, onLoading, onShowAuthMessage, signIn } from '@/store/slices/authSlice';
+import { SecondStep } from '../app-components/daily-orders/CreateDailyOrderModal/SecondStep'
 
 const mapStateToProps = (state: RootState) => ({
-	...state.auth,
-})
+    ...state.auth,
+});
 
 const mapDispatchToProps = {
-	signIn,
-	onHideAuthMessage,
-	onShowAuthMessage,
-	onLoading,
-}
+    signIn,
+    onHideAuthMessage,
+    onShowAuthMessage,
+    onLoading,
+};
 
-const connector = connect(mapStateToProps, mapDispatchToProps)
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
-type PropsFromRedux = ConnectedProps<typeof connector>
+type PropsFromRedux = ConnectedProps<typeof connector>;
 
 type Props = {
-	allowRedirect?: boolean
-} & PropsFromRedux
+    allowRedirect?: boolean;
+} & PropsFromRedux;
 
 export const SignInForm = connector((props: Props) => {
-	const navigate = useNavigate()
+    const navigate = useNavigate();
 
-	const {
-		allowRedirect,
-		onHideAuthMessage,
-		onLoading,
-		access_token,
-		loading,
-		redirect,
-		showMessage,
-		message,
-		signIn,
-	} = props
+    const {
+        allowRedirect = true,
+        onHideAuthMessage,
+        onLoading,
+        access_token,
+        loading,
+        redirect,
+        showMessage,
+        message,
+        signIn,
+    } = props;
 
-	const onLogin = (values: { username: string; password: string }) => {
-		onLoading()
+    const [secondStep, setSecondStep] = useState(false);
+    const [code, setCode] = useState('');
+    const [credentials, setCredentials] = useState<{ username: string; password: string } | null>(null);
 
-		signIn(values)
-	}
+    const onLogin = async (values: { username: string; password: string }) => {
+        onLoading();
 
-	useEffect(() => {
-		if (access_token !== null && allowRedirect) {
-			console.log('test')
-			navigate(redirect)
-		}
+        try {
+            const response = await AuthService.check2FA({ username: values.username });
+            const has2FA = response.data;
 
-		if (showMessage) {
-			const timer = setTimeout(() => onHideAuthMessage(), 5000)
+            if (has2FA) {
+                setCredentials(values);
+                setSecondStep(true);
+            } else {
+                signIn(values);
+            }
+        } catch (err) {
+            message.error('Ошибка при проверке двухэтапной аутентификации');
+        }
+    };
 
-			return () => {
-				clearTimeout(timer)
-			}
-		}
-	}, [access_token, allowRedirect, redirect, showMessage, navigate])
+    useEffect(() => {
 
-	return (
-		<>
-			{showMessage && message && (
-				<motion.div
-					initial={{ opacity: 0, marginBottom: 0 }}
-					animate={{
-						opacity: showMessage ? 1 : 0,
-						marginBottom: showMessage ? 20 : 0,
-					}}
-				>
-					<Alert message={message} showIcon type='error' />
-				</motion.div>
-			)}
+        if (access_token !== null && allowRedirect) {
+            navigate(redirect);
+        }
 
-			<Form
-				layout='vertical'
-				name='login-form'
-				onFinish={onLogin}
-				// initialValues={{
-				//     username: 'guest',
-				//     password: 'password',
-				// }}
-			>
-				<Form.Item
-					label={
-						<span>
-							Имя пользователя{' '}
-							{/* <Tooltip 
-                            title="По умолчанию: guest"
-                            placement="right"
-                            overlayInnerStyle={{
-                            fontSize: '12px',
-                            padding: '6px 10px',
-                            backgroundColor: '#f5f5f5',
-                            color: '#333',
+        if (showMessage) {
+            const timer = setTimeout(() => onHideAuthMessage(), 5000);
+
+            return () => {
+                clearTimeout(timer);
+            };
+        }
+    });
+
+    return (
+        <>
+            {showMessage && message && (
+                <motion.div
+                    initial={{ opacity: 0, marginBottom: 0 }}
+                    animate={{
+                        opacity: showMessage ? 1 : 0,
+                        marginBottom: showMessage ? 20 : 0,
+                    }}
+                >
+                    <Alert message={message} showIcon type='error' />
+                </motion.div>
+            )}
+
+            {secondStep ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                    <Input
+                        placeholder='Введите код из приложения'
+                        value={code}
+                        onChange={e => setCode(e.target.value)}
+                        style={{ width: '77%' }}
+                    />
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <Button
+                            type='primary'
+                            onClick={async () => {
+                                try {
+                                    await AuthService.verify2FA({ username: 'superadmin', code });
+                                    // При успешной проверке кода, мы должны логинить пользователя
+                                    if (credentials) {
+                                        signIn(credentials);
+                                    }
+                                } catch (err: any) {
+                                    message.error(err?.response?.data?.detail || 'Произошла ошибка при проверке кода');
+                                }
                             }}
-                            overlayStyle={{ maxWidth: '200px' }}
-                            >
-                            <QuestionCircleOutlined style={{ color: '#999' }} />
-                        </Tooltip> */}
-						</span>
-					}
-					name='username'
-					rules={[
-						{
-							required: true,
-							message: 'Введите имя пользователя или guest',
-						},
-					]}
-				>
-					<Input
-						placeholder='Введите имя пользователя'
-						prefix={<MailOutlined className='text-primary' />}
-					/>
-				</Form.Item>
-				<Form.Item
-					label={
-						<span>
-							Пароль{' '}
-							{/* <Tooltip 
-                            title="По умолчанию: password"
-                            placement="right"
-                            overlayInnerStyle={{
-                            fontSize: '12px',
-                            padding: '6px 10px',
-                            backgroundColor: '#f5f5f5',
-                            color: '#333',
-                            }}
-                            overlayStyle={{ maxWidth: '200px' }}
-                            >
-                            <QuestionCircleOutlined style={{ color: '#999' }} />
-                        </Tooltip> */}
-						</span>
-					}
-					name='password'
-					rules={[
-						{
-							required: true,
-							message: 'Введите пароль или password',
-						},
-					]}
-				>
-					<Input.Password
-						autoComplete='off'
-						placeholder='Введите пароль'
-						prefix={<LockOutlined className='text-primary' />}
-					/>
-				</Form.Item>
-				<Form.Item>
-					<Button
-						type='primary'
-						htmlType='submit'
-						block
-						loading={loading}
-						icon={<LoginOutlined />}
-					>
-						Войти
-					</Button>
-				</Form.Item>
-				{/* <Form.Item>
-                    <Button
-                        type='default'
-                        block
-                        onClick={() => onLogin({ username: 'guest', password: 'password' })}
-                        icon={<UserOutlined />}
+                        >
+                            Подтвердить
+                        </Button>
+                        <Button onClick={() => setSecondStep(false)}>
+                            Вернуться назад
+                        </Button>
+                    </div>
+                </div>
+            ) : (
+                <Form layout='vertical' name='login-form' onFinish={onLogin}>
+                    <Form.Item
+                        label='Имя пользователя'
+                        name='username'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Пожалуйста, введите имя пользователя',
+                            },
+                        ]}
                     >
-                        Войти как гость
-                    </Button>
-                </Form.Item> */}
-			</Form>
-		</>
-	)
-})
+                        <Input placeholder='Введите имя пользователя' prefix={<MailOutlined className='text-primary' />} />
+                    </Form.Item>
+                    <Form.Item
+                        label='Пароль'
+                        name='password'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Пожалуйста, введите пароль',
+                            },
+                        ]}
+                    >
+                        <Input.Password
+                            autoComplete='off'
+                            placeholder='Введите пароль'
+                            prefix={<LockOutlined className='text-primary' />}
+                        />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type='primary' htmlType='submit' block loading={loading}>
+                            Войти
+                        </Button>
+                    </Form.Item>
+                </Form>
+            )}
+        </>
+    );
+});
