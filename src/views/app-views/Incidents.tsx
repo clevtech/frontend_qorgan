@@ -1,11 +1,23 @@
 import { QorganService } from '@/services/QorganService'
-import { Button, Card, DatePicker, notification, Table, Typography } from 'antd'
+import { Button, Card, DatePicker, notification, Table, Typography, Tag } from 'antd'
 import { saveAs } from 'file-saver'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import * as XLSX from 'xlsx'
 
 import type { TableColumnsType } from 'antd'
+
+const getColor = (text: string) => {
+  const value = parseFloat(text)
+
+  if (value > -3) {
+    return 'red'
+  } else if (value >= -10) {
+    return 'gold'
+  } else {
+    return 'green'
+  }
+}
 
 const Incidents = () => {
 	const [mode, setMode] = useState<'auto' | 'manual' | 'off'>('auto')
@@ -28,31 +40,37 @@ const Incidents = () => {
 				dataIndex: 'direction',
 				key: 'direction',
 				title: 'Сектор',
-				width: '25%',
+				width: '20%',
+			},
+			{
+				dataIndex: 'drone_name',
+				key: 'drone_name',
+				title: 'Названае',
+				width: '20%',
 			},
 			{
 				dataIndex: 'frequency',
 				key: 'frequency',
 				title: 'Частота дрона',
-				width: '25%',
+				width: '20%',
 				render: (text: string | null) => (
-					<span>{text ? text : 'Отсутствует'}</span>
+					<span>{text ? `${text} ГГц` : 'Отсутствует'}</span>
 				),
 			},
 			{
 				dataIndex: 'power',
 				key: 'power',
 				title: 'Сила сигнала',
-				width: '25%',
+				width: '20%',
 				render: (text: string | null) => (
-					<span>{text ? text : 'Отсутствует'}</span>
+					<Tag color={getColor(text)}>{text ? text : 'Отсутствует'}</Tag>
 				),
 			},
 			{
 				dataIndex: 'datetime',
 				key: 'datetime',
 				title: 'Время',
-				width: '25%',
+				width: '20%',
 				render: (createdAt: string) => (
 					<Typography.Text>
 						{moment(createdAt).format('DD/MM/YYYY HH:mm')}
