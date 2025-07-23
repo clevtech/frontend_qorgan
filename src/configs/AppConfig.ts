@@ -14,7 +14,7 @@ export const API_BASE_URL = 'https://' + window.location.hostname + ':443'
 
 // export const API_BASE_URL = 'http://192.168.1.249:8080'
 
-export const WEBSOCKET_BASE_URL = `ws://${IP_ADDRESS}/ws`
+export const WEBSOCKET_BASE_URL = `wss://${IP_ADDRESS}/ws`
 
 export const APP_PREFIX_PATH = '/app'
 export const AUTH_PREFIX_PATH = '/auth'
