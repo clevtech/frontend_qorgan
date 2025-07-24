@@ -5,43 +5,6 @@ import { Card, notification, Radio, Switch, Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 import useWebSocket from 'react-use-websocket'
 
-/**
- * Возвращает стили для позиционирования дрона на карте.
- * distance должен быть в диапазоне от 100 до 1000.
- * 100 = 0%, 1000 = 100%, плавный переход между ними.
- */
-const getDroneStyle = (angleDeg: number, distance: number) => {
-	const offset = ((distance - 100) / 900) * 615 // можно подогнать под твою карту
-	return {
-		position: 'absolute' as const,
-		left: '50%',
-		bottom: '-7%',
-		transform: `
-			translate(-50%, -50%)
-			rotate(${angleDeg}deg)
-			translateY(-${offset}px)
-			rotate(${-angleDeg}deg)
-		`,
-		width: '5%',
-	}
-}
-
-const getTitleStyle = (angleDeg: number, distance: number) => {
-	const offset = ((distance - 100) / 900) * 615 // можно подогнать под твою карту
-	return {
-		position: 'absolute' as const,
-		left: '54.5%',
-		bottom: '9%',
-		transform: `
-			translate(-50%, -50%)
-			rotate(${angleDeg}deg)
-			translateY(-${offset}px)
-			rotate(${-angleDeg}deg)
-		`,
-		width: '15%',
-	}
-}
-
 const Incidents = () => {
 	const [mode, setMode] = useState<'auto' | 'manual' | 'off'>('auto')
 	const [data, setData] = useState<any[]>([])

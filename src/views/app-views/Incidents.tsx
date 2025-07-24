@@ -1,22 +1,36 @@
+import warning from '@/assets/warning.mp3'
+import { DashboardMap } from '@/components/app-components/dashboard/DashboardMap/components/DashboardMap'
 import { QorganService } from '@/services/QorganService'
-import { Button, Card, DatePicker, notification, Table, Typography, Tag } from 'antd'
+import {
+	Button,
+	Card,
+	DatePicker,
+	Modal,
+	notification,
+	Table,
+	Tag,
+	Typography,
+} from 'antd'
 import { saveAs } from 'file-saver'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
+import useWebSocket from 'react-use-websocket'
 import * as XLSX from 'xlsx'
+
+const warningAudio = new Audio(warning)
 
 import type { TableColumnsType } from 'antd'
 
 const getColor = (text: string) => {
-  const value = parseFloat(text)
+	const value = parseFloat(text)
 
-  if (value > -3) {
-    return 'red'
-  } else if (value >= -10) {
-    return 'gold'
-  } else {
-    return 'green'
-  }
+	if (value > -3) {
+		return 'red'
+	} else if (value >= -10) {
+		return 'gold'
+	} else {
+		return 'green'
+	}
 }
 
 const Incidents = () => {
@@ -24,6 +38,8 @@ const Incidents = () => {
 	const [data, setData] = useState<any[]>([])
 	const [loading, setLoading] = useState<boolean>(false)
 	const [modules, setModules] = useState<any>([])
+	const [selectedRow, setSelectedRow] = useState<any>(null)
+	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [pagination, setPagination] = useState({
 		current: 1,
 		pageSize: 10,
@@ -33,6 +49,23 @@ const Incidents = () => {
 		undefined
 	)
 	const [tempDateTo, setTempDateTo] = useState<string | undefined>(undefined)
+
+	// WebSocket connection for detections
+	const { lastMessage } = useWebSocket(
+		`wss://${window.location.hostname}/backend/ws/detections/`,
+		{
+			onOpen: () => {
+				console.log('WebSocket соединение открыто')
+			},
+			onMessage: message => {
+				console.log('Получено сообщение из WebSocket:', message.data)
+			},
+			onError: error => {
+				console.error('WebSocket ошибка:', error)
+			},
+			shouldReconnect: () => true, // автоматическое переподключение
+		}
+	)
 
 	const columns = (() => {
 		return [
@@ -77,8 +110,25 @@ const Incidents = () => {
 					</Typography.Text>
 				),
 			},
+			{
+				title: 'Действия',
+				width: '20%',
+				render: (_, record) => (
+					<Button
+						type='primary'
+						onClick={() => {
+							setSelectedRow(record)
+							setIsModalOpen(true)
+						}}
+					>
+						Подробнее
+					</Button>
+				),
+			},
 		] as TableColumnsType<any>
 	})()
+
+	console.log(lastMessage)
 
 	useEffect(() => {
 		let cancelled = false
@@ -159,6 +209,24 @@ const Incidents = () => {
 		fetchModules()
 	}, [tempDateFrom, tempDateTo])
 
+	// Добавляем новые сообщения из WebSocket в начало data
+	useEffect(() => {
+		if (lastMessage !== null) {
+			try {
+				const newDetection = JSON.parse(lastMessage.data)
+
+				if (parseFloat(newDetection.frequency) > -3) {
+					warningAudio.play()
+					setTimeout(() => warningAudio.pause(), 3000)
+				}
+
+				setData(prevData => [newDetection, ...prevData])
+			} catch (e) {
+				console.error('Ошибка при парсинге сообщения WebSocket:', e)
+			}
+		}
+	}, [lastMessage])
+
 	const handleExport = () => {
 		const worksheet = XLSX.utils.json_to_sheet(data)
 		const workbook = XLSX.utils.book_new()
@@ -174,6 +242,47 @@ const Incidents = () => {
 
 	return (
 		<div style={{ height: '100%', width: '100%' }}>
+			{selectedRow && (
+				<Modal
+					open={isModalOpen}
+					onCancel={() => setIsModalOpen(false)}
+					onOk={() => setIsModalOpen(false)}
+					width={1000}
+					title='Подробнее'
+				>
+					<div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
+						<div style={{ background: '#eee', width: '70%', height: '30rem' }}>
+							<DashboardMap height={490} data={selectedRow} />
+						</div>
+						<div
+							style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
+						>
+							<Typography.Title level={5}>
+								{' '}
+								Сектор: {selectedRow.direction}
+							</Typography.Title>
+							<Typography.Text>
+								Название дрона: {selectedRow.drone_name}
+							</Typography.Text>
+							<Typography.Text>
+								Частота дрона: {selectedRow.frequency} ГГц
+							</Typography.Text>
+							<Typography.Text>
+								Сила сигнала:{' '}
+								<Tag color={getColor(selectedRow.power)}>
+									{selectedRow.power ? selectedRow.power : 'Отсутствует'}
+								</Tag>
+							</Typography.Text>
+							<Typography.Text>
+								Время: {moment(selectedRow.datetime).format('HH:mm')}
+							</Typography.Text>
+							<Typography.Text>
+								Дата: {moment(selectedRow.datetime).format('DD.MM.YYYY')}
+							</Typography.Text>
+						</div>
+					</div>
+				</Modal>
+			)}
 			<Card style={{ height: '100%', width: '100%' }}>
 				<div
 					style={{

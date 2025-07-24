@@ -2,7 +2,7 @@ import drone from '@/assets/drone.png'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useState } from 'react'
 import { MapContainer, SVGOverlay, TileLayer } from 'react-leaflet'
-import { centerKazakhstan, tileLayerUrl } from '../constants/mapConstants'
+import { centerKazakhstan } from '../constants/mapConstants'
 
 import useWebSocket from 'react-use-websocket'
 
@@ -16,30 +16,33 @@ export const DashboardMap = (props: any) => {
 		[[number, number], [number, number]]
 	>([
 		[centerKazakhstan.lat - 0.09, centerKazakhstan.lng - 0.15],
-		[centerKazakhstan.lat + 0.2233333, centerKazakhstan.lng + 0.1492341],
+		[centerKazakhstan.lat + 0.2288888, centerKazakhstan.lng + 0.1492341],
 	])
-	const { data = [], zoom = 4, heigth = 870 } = props
+	const { data = [], zoom = 4, data: selectedRow = null } = props
 	const [modules, setModules] = useState<any>([])
 
-
-
+	const heigth = selectedRow ? 490 : 870
 	const [moduleStates, setModuleStates] = useState<any>({})
 
-	let groupedData1 = data.map(item => {
-		return {
-			lat: item?.lat ?? 0,
-			lng: item?.long ?? 0,
-			url: 'http://' + item.ip_addr,
-		}
-	})
+	// let groupedData1 = data.map(item => {
+	// 	return {
+	// 		lat: item?.lat ?? 0,
+	// 		lng: item?.long ?? 0,
+	// 		url: 'http://' + item.ip_addr,
+	// 	}
+	// })
 
 	useEffect(() => {
-		setSocketUrl(
-			props.switched
-				? `wss://${window.location.hostname}/backend/ws/statuses_demo/`
-				: `wss://${window.location.hostname}/backend/ws/statuses/`
-		)
-	}, [props.switched])
+		if (selectedRow) {
+			setSocketUrl(`wss://${window.location.hostname}/backend/`)
+		} else {
+			setSocketUrl(
+				props.switched
+					? `wss://${window.location.hostname}/backend/ws/statuses_demo/`
+					: `wss://${window.location.hostname}/backend/ws/statuses/`
+			)
+		}
+	}, [props.switched, selectedRow])
 
 	const { lastMessage } = useWebSocket(socketUrl, {
 		onOpen: () => console.log('WebSocket connection opened'),
@@ -72,11 +75,11 @@ export const DashboardMap = (props: any) => {
 			<text
 				x={centerX}
 				y={centerY + direction * 15}
-				fontSize="8"
-				fill="white"
-				stroke="black"
-				strokeWidth="0.5"
-				textAnchor="middle"
+				fontSize='8'
+				fill='white'
+				stroke='black'
+				strokeWidth='0.5'
+				textAnchor='middle'
 			>
 				{module.name}
 			</text>
@@ -91,7 +94,17 @@ export const DashboardMap = (props: any) => {
 	}
 
 	const getFillColor = (direction: number) => {
-		const found = moduleStates?.statuses?.find((m: any) => m.direction === direction)
+		if (selectedRow) {
+			if (selectedRow.direction === direction) {
+				return '#D63604'
+			} else {
+				return '#AAC5FF'
+			}
+		}
+
+		const found = moduleStates?.statuses?.find(
+			(m: any) => m.direction === direction
+		)
 		if (!found) return '#AAC5FF'
 		if (found.status === 1) return '#D63604'
 		if (found.status === 0) return '#407BFF'
@@ -129,7 +142,7 @@ export const DashboardMap = (props: any) => {
 					strokeWidth='0.4'
 					textAnchor='middle'
 				>
-					БПЛА: {distance}
+					БПЛА: {Math.round(distance)}
 				</text>
 				<image href={drone} x={x} y={y} width='20' height='20' />
 			</>
@@ -144,23 +157,34 @@ export const DashboardMap = (props: any) => {
 				// bounds={boundsKazakhstan}
 				center={centerKazakhstan}
 				zoom={zoom}
-				minZoom={14}
+				minZoom={selectedRow ? 13 : 14}
 				maxBounds={boundsKazakhstan}
 				maxBoundsViscosity={0}
 				// zoom={false}
 				style={{ height: `${heigth}px`, borderRadius: 10 }}
 			>
-				<TileLayer url="/tiles/{z}/{x}/{y}.png" opacity={1} />
+				<TileLayer url='/tiles/{z}/{x}/{y}.png' opacity={1} />
 				<SVGOverlay
-					bounds={[
-						[centerKazakhstan.lat - 0.075, centerKazakhstan.lng - 0.075],
-						[centerKazakhstan.lat + 0.075, centerKazakhstan.lng + 0.075],
-					]}
+					bounds={
+						selectedRow
+							? [
+									[centerKazakhstan.lat - 0.1, centerKazakhstan.lng - 0.1],
+									[centerKazakhstan.lat + 0.05, centerKazakhstan.lng + 0.18],
+							  ]
+							: [
+									[centerKazakhstan.lat - 0.075, centerKazakhstan.lng - 0.075],
+									[centerKazakhstan.lat + 0.075, centerKazakhstan.lng + 0.075],
+							  ]
+					}
 				>
 					<svg
 						xmlns='http://www.w3.org/2000/svg'
 						viewBox='0 0 484.188 495.572'
-						style={{ transform: 'scale(0.3) rotate(-73deg)', transformOrigin: 'center', pointerEvents: 'auto' }}
+						style={{
+							transform: 'scale(0.3) rotate(-73deg)',
+							transformOrigin: 'center',
+							pointerEvents: 'auto',
+						}}
 					>
 						{renderModuleTooltip(
 							3,
@@ -223,6 +247,8 @@ export const DashboardMap = (props: any) => {
 								? renderDrone(mod.distance, mod.direction)
 								: null
 						)}
+						{selectedRow &&
+							renderDrone(selectedRow.distance, selectedRow.direction)}
 					</svg>
 				</SVGOverlay>
 			</MapContainer>
