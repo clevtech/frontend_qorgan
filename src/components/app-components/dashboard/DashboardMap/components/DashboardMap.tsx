@@ -1,10 +1,22 @@
 import drone from '@/assets/drone.png'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useState } from 'react'
-import { MapContainer, SVGOverlay, TileLayer } from 'react-leaflet'
+import { MapContainer, SVGOverlay, TileLayer, useMap } from 'react-leaflet'
 import { centerKazakhstan } from '../constants/mapConstants'
 
 import useWebSocket from 'react-use-websocket'
+
+const MapResizer = ({ visible }: { visible: boolean }) => {
+	const map = useMap()
+	useEffect(() => {
+		if (visible) {
+			setTimeout(() => {
+				map.invalidateSize()
+			}, 300)
+		}
+	}, [visible, map])
+	return null
+}
 
 export const DashboardMap = (props: any) => {
 	const [socketUrl, setSocketUrl] = useState(
@@ -157,16 +169,17 @@ export const DashboardMap = (props: any) => {
 				// bounds={boundsKazakhstan}
 				center={centerKazakhstan}
 				zoom={zoom}
-				minZoom={selectedRow ? 13 : 14}
+				minZoom={false ? 13 : 14}
 				maxBounds={boundsKazakhstan}
 				maxBoundsViscosity={0}
 				// zoom={false}
 				style={{ height: `${heigth}px`, borderRadius: 10 }}
 			>
 				<TileLayer url='/tiles/{z}/{x}/{y}.png' opacity={1} />
+				<MapResizer visible={true} />
 				<SVGOverlay
 					bounds={
-						selectedRow
+						false
 							? [
 									[centerKazakhstan.lat - 0.1, centerKazakhstan.lng - 0.1],
 									[centerKazakhstan.lat + 0.05, centerKazakhstan.lng + 0.18],
