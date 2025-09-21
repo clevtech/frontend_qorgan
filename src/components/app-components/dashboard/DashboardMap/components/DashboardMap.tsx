@@ -69,7 +69,7 @@ export const DashboardMap = (props: any) => {
 		if (lastMessage?.data) {
 			try {
 				const incoming = JSON.parse(lastMessage.data)
-				setModuleStates(incoming.statuses)
+				setModuleStates( props.switch ? incoming.statuses : incoming )
 			} catch (err) {
 				console.error('Ошибка при парсинге WebSocket-сообщения:', err)
 			}
@@ -161,7 +161,6 @@ export const DashboardMap = (props: any) => {
 		)
 	}
 
-	console.log(props.switched)
 
 	return (
 		<div style={{ position: 'relative' }}>
@@ -268,3 +267,6 @@ export const DashboardMap = (props: any) => {
 		</div>
 	)
 }
+
+
+

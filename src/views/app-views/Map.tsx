@@ -181,7 +181,7 @@ const Incidents = () => {
 					<DashboardMap switched={isSwitched} />
 
 					<div style={{display: 'flex', justifyContent: 'space-between'}} >
-						{modules.map((module: any, index: number) => (
+						{modules?.map((module: any, index: number) => (
 						<div>
 							<div>
 								<strong>{module.name}</strong>

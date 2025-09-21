@@ -19,16 +19,16 @@ export const NavProfile: FC<{ data?: unknown }> = ({ data }) => {
 	useEffect(() => {
 		setIsLoading(true)
 
-		if (access_token) {
-			const decoded = jwtDecode(access_token) as {
-				fullName: string
-				role: string
-			}
+		// if (access_token) {
+		// 	const decoded = jwtDecode(access_token) as {
+		// 		fullName: string
+		// 		role: string
+		// 	}
 
-			const { fullName, role } = decoded
+		// 	const { fullName, role } = decoded
 
-			setAccount({ fullName, role })
-		}
+		// 	setAccount({ fullName, role })
+		// }
 
 		setIsLoading(false)
 	}, [access_token])
