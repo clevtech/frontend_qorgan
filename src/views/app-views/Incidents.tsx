@@ -16,10 +16,14 @@ import moment from 'moment'
 import { useEffect, useState } from 'react'
 import useWebSocket from 'react-use-websocket'
 import * as XLSX from 'xlsx'
+import { RootState } from '@/store'
+import { useSelector } from 'react-redux'
 
 const warningAudio = new Audio(warning)
 
 import type { TableColumnsType } from 'antd'
+import { Message } from '@/lang/Message'
+import { WEBSOCKET_BASE_URL } from '@/configs/AppConfig'
 
 const getColor = (text: string) => {
 	const value = parseFloat(text)
@@ -45,6 +49,11 @@ const Incidents = () => {
 		pageSize: 10,
 		total: 0,
 	})
+	const lang = useSelector((state: RootState) => state.theme.locale) as
+		| 'en'
+		| 'ru'
+		| 'kk'
+
 	const [tempDateFrom, setTempDateFrom] = useState<string | undefined>(
 		undefined
 	)
@@ -52,7 +61,7 @@ const Incidents = () => {
 
 	// WebSocket connection for detections
 	const { lastMessage } = useWebSocket(
-		`wss://${window.location.hostname}/backend/ws/detections/`,
+		`${WEBSOCKET_BASE_URL}/backend/ws/detections/`,
 		{
 			onOpen: () => {
 				console.log('WebSocket соединение открыто')
@@ -72,19 +81,19 @@ const Incidents = () => {
 			{
 				dataIndex: 'direction',
 				key: 'direction',
-				title: 'Сектор',
+				title: Message.sector[lang],
 				width: '20%',
 			},
 			{
 				dataIndex: 'drone_name',
 				key: 'drone_name',
-				title: 'Названае',
+				title: Message.name[lang],
 				width: '20%',
 			},
 			{
 				dataIndex: 'frequency',
 				key: 'frequency',
-				title: 'Частота дрона',
+				title: Message.droneFrequency[lang],
 				width: '20%',
 				render: (text: string | null) => (
 					<span>{text ? `${text} ГГц` : 'Отсутствует'}</span>
@@ -93,7 +102,7 @@ const Incidents = () => {
 			{
 				dataIndex: 'power',
 				key: 'power',
-				title: 'Сила сигнала',
+				title: Message.signalPower[lang],
 				width: '20%',
 				render: (text: string | null) => (
 					<Tag color={getColor(text)}>{text ? text : 'Отсутствует'}</Tag>
@@ -102,7 +111,7 @@ const Incidents = () => {
 			{
 				dataIndex: 'datetime',
 				key: 'datetime',
-				title: 'Время',
+				title: Message.time[lang],
 				width: '20%',
 				render: (createdAt: string) => (
 					<Typography.Text>
@@ -111,7 +120,7 @@ const Incidents = () => {
 				),
 			},
 			{
-				title: 'Действия',
+				title: Message.action[lang],
 				width: '20%',
 				render: (_, record) => (
 					<Button
@@ -121,7 +130,7 @@ const Incidents = () => {
 							setIsModalOpen(true)
 						}}
 					>
-						Подробнее
+						{Message.more[lang]}
 					</Button>
 				),
 			},
@@ -151,8 +160,8 @@ const Incidents = () => {
 				if (!cancelled) {
 					setMode(previousMode)
 					notification.error({
-						message: 'Ошибка при получении данных',
-						description: (error as Error).message || 'Что-то пошло не так.',
+						message: Message.getDataError[lang],
+						description: (error as Error).message || Message.getDataErrorDescription[lang],
 					})
 				}
 			} finally {
@@ -182,10 +191,10 @@ const Incidents = () => {
 			}))
 		} catch (error) {
 			notification.error({
-				message: 'Ошибка при получении обнаружений',
+				message: Message.getSensorError[lang],
 				description:
 					(error as Error).message ||
-					'Не удалось загрузить данные обнаружений.',
+					Message.getSensorErrorDescription[lang],
 			})
 		}
 	}
@@ -197,9 +206,9 @@ const Incidents = () => {
 			setModules(response.data.modules)
 		} catch (error) {
 			notification.error({
-				message: 'Ошибка при получении модулей',
+				message: Message.getModulesError[lang],
 				description:
-					(error as Error).message || 'Не удалось загрузить данные модулей.',
+					(error as Error).message || Message.getModulesErrorDescription[lang],
 			})
 		}
 	}
@@ -222,7 +231,7 @@ const Incidents = () => {
 
 				setData(prevData => [newDetection, ...prevData])
 			} catch (e) {
-				console.error('Ошибка при парсинге сообщения WebSocket:', e)
+				console.error(Message.getWebSocketError[lang], e)
 			}
 		}
 	}, [lastMessage])
@@ -248,7 +257,7 @@ const Incidents = () => {
 					onCancel={() => setIsModalOpen(false)}
 					onOk={() => setIsModalOpen(false)}
 					width={1000}
-					title='Подробнее'
+					title={Message.more[lang]}
 				>
 					<div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }}>
 						<div style={{ background: '#eee', width: '70%', height: '30rem' }}>
@@ -259,25 +268,25 @@ const Incidents = () => {
 						>
 							<Typography.Title level={5}>
 								{' '}
-								Сектор: {selectedRow.direction}
+								{Message.sector[lang]}: {selectedRow.direction}
 							</Typography.Title>
 							<Typography.Text>
-								Название дрона: {selectedRow.drone_name}
+								{Message.name[lang]}: {selectedRow.drone_name}
 							</Typography.Text>
 							<Typography.Text>
-								Частота дрона: {selectedRow.frequency} ГГц
+								{Message.droneFrequency[lang]}: {selectedRow.frequency} ГГц
 							</Typography.Text>
 							<Typography.Text>
-								Сила сигнала:{' '}
+								{Message.signalPower[lang]}:{' '}
 								<Tag color={getColor(selectedRow.power)}>
 									{selectedRow.power ? selectedRow.power : 'Отсутствует'}
 								</Tag>
 							</Typography.Text>
 							<Typography.Text>
-								Время: {moment(selectedRow.datetime).format('HH:mm')}
+								{Message.time[lang]}: {moment(selectedRow.datetime).format('HH:mm')}
 							</Typography.Text>
 							<Typography.Text>
-								Дата: {moment(selectedRow.datetime).format('DD.MM.YYYY')}
+								{Message.date[lang]}: {moment(selectedRow.datetime).format('DD.MM.YYYY')}
 							</Typography.Text>
 						</div>
 					</div>
@@ -296,6 +305,7 @@ const Incidents = () => {
 						<DatePicker.RangePicker
 							className='mr-2'
 							style={{ width: '100%', borderRadius: '12px' }}
+							placeholder={[Message.fromDate[lang], Message.toDate[lang]]}
 							value={
 								tempDateFrom && tempDateTo
 									? [moment(tempDateFrom), moment(tempDateTo)]
@@ -308,7 +318,7 @@ const Incidents = () => {
 						/>
 					</div>
 					<Button type='primary' onClick={handleExport}>
-						Скачать
+						{Message.download[lang]}
 					</Button>
 				</div>
 				<Table

@@ -5,6 +5,7 @@ import { MapContainer, SVGOverlay, TileLayer, useMap } from 'react-leaflet'
 import { centerKazakhstan } from '../constants/mapConstants'
 
 import useWebSocket from 'react-use-websocket'
+import { WEBSOCKET_BASE_URL } from '@/configs/AppConfig'
 
 const MapResizer = ({ visible }: { visible: boolean }) => {
 	const map = useMap()
@@ -21,14 +22,14 @@ const MapResizer = ({ visible }: { visible: boolean }) => {
 export const DashboardMap = (props: any) => {
 	const [socketUrl, setSocketUrl] = useState(
 		props.switched
-			? `wss://${window.location.hostname}/backend/ws/statuses_demo/`
-			: `wss://${window.location.hostname}/backend/ws/statuses/`
+			? `${WEBSOCKET_BASE_URL}/backend/ws/statuses_demo/`
+			: `${WEBSOCKET_BASE_URL}/backend/ws/statuses/`
 	)
 	const [boundsKazakhstan, setBoundsKazakhstan] = useState<
 		[[number, number], [number, number]]
 	>([
-		[centerKazakhstan.lat - 0.09, centerKazakhstan.lng - 0.15],
-		[centerKazakhstan.lat + 0.2288888, centerKazakhstan.lng + 0.1492341],
+		[40.6, 46.5], // SW: near Uzbekistan/Turkmenistan border
+		[55.6, 87.5], // NE: near Altai/China border
 	])
 	const { data = [], zoom = 4, data: selectedRow = null } = props
 	const [modules, setModules] = useState<any>([])
@@ -46,12 +47,12 @@ export const DashboardMap = (props: any) => {
 
 	useEffect(() => {
 		if (selectedRow) {
-			setSocketUrl(`wss://${window.location.hostname}/backend/`)
+			setSocketUrl(`${WEBSOCKET_BASE_URL}/backend/`)
 		} else {
 			setSocketUrl(
 				props.switched
-					? `wss://${window.location.hostname}/backend/ws/statuses_demo/`
-					: `wss://${window.location.hostname}/backend/ws/statuses/`
+						? `${WEBSOCKET_BASE_URL}/backend/ws/statuses_demo/`
+					: `${WEBSOCKET_BASE_URL}/backend/ws/statuses/`
 			)
 		}
 	}, [props.switched, selectedRow])
@@ -69,7 +70,7 @@ export const DashboardMap = (props: any) => {
 		if (lastMessage?.data) {
 			try {
 				const incoming = JSON.parse(lastMessage.data)
-				setModuleStates( props.switch ? incoming.statuses : incoming )
+				setModuleStates(incoming)
 			} catch (err) {
 				console.error('Ошибка при парсинге WebSocket-сообщения:', err)
 			}
@@ -161,33 +162,25 @@ export const DashboardMap = (props: any) => {
 		)
 	}
 
-
 	return (
 		<div style={{ position: 'relative' }}>
 			<MapContainer
 				// bounds={boundsKazakhstan}
 				center={centerKazakhstan}
 				zoom={zoom}
-				minZoom={false ? 13 : 14}
+				minZoom={14}
 				maxBounds={boundsKazakhstan}
-				maxBoundsViscosity={0}
+				maxBoundsViscosity={1.0}
 				// zoom={false}
 				style={{ height: `${heigth}px`, borderRadius: 10 }}
 			>
 				<TileLayer url='/tiles/{z}/{x}/{y}.png' opacity={1} />
 				<MapResizer visible={true} />
 				<SVGOverlay
-					bounds={
-						false
-							? [
-									[centerKazakhstan.lat - 0.1, centerKazakhstan.lng - 0.1],
-									[centerKazakhstan.lat + 0.05, centerKazakhstan.lng + 0.18],
-							  ]
-							: [
-									[centerKazakhstan.lat - 0.075, centerKazakhstan.lng - 0.075],
-									[centerKazakhstan.lat + 0.075, centerKazakhstan.lng + 0.075],
-							  ]
-					}
+					bounds={[
+						[centerKazakhstan.lat - 0.075, centerKazakhstan.lng - 0.075],
+						[centerKazakhstan.lat + 0.075, centerKazakhstan.lng + 0.075],
+					]}
 				>
 					<svg
 						xmlns='http://www.w3.org/2000/svg'
@@ -267,6 +260,3 @@ export const DashboardMap = (props: any) => {
 		</div>
 	)
 }
-
-
-

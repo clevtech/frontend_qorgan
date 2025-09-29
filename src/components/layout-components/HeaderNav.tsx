@@ -1,11 +1,12 @@
 import { Layout } from 'antd'
 import { FC, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+
+import { LangToggle } from '@/components/layout-components/LangToggle'
 
 import { Logo } from '@/components/layout-components/Logo'
 import { NavProfile } from '@/components/layout-components/NavProfile'
-import { ACCESS_TOKEN } from '@/constants/AuthConstant'
 
 import {
 	NAV_TYPE_TOP,
@@ -18,9 +19,8 @@ import {
 	onNavCollapsedChange,
 } from '@/store/slices/themeSlice'
 
-import { API_BASE_URL } from '@/configs/AppConfig'
+import { Message } from '@/lang/Message'
 import utils from '@/utils'
-import axios from 'axios'
 import notext from '../../../public/images/notext.png'
 
 const { Header } = Layout
@@ -29,7 +29,10 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 	const [, setSearchActive] = useState(false)
 	const [title, setTitle] = useState('')
 	const location = useLocation()
-
+	const lang = useSelector((state: RootState) => state.theme.locale) as
+		| 'en'
+		| 'ru'
+		| 'kk'
 	const dispatch = useDispatch()
 
 	const currentTheme = useSelector(
@@ -70,7 +73,7 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 
 	const onToggle = () => {
 		if (!isMobile) {
-			    dispatch(onNavCollapsedChange(!navCollapsed))
+			dispatch(onNavCollapsedChange(!navCollapsed))
 		} else {
 			dispatch(onMobileNavChange(!mobileNav))
 		}
@@ -115,7 +118,14 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 		>
 			<div className={`app-header-wrapper ${isNavTop ? 'layout-top-nav' : ''}`}>
 				<Logo src={navCollapsed ? notext : '###'} />
-				<div className='nav' style={{ width: `calc(100% - ${getNavWidth()})`, display: 'flex', alignItems: 'center' }}>
+				<div
+					className='nav'
+					style={{
+						width: `calc(100% - ${getNavWidth()})`,
+						display: 'flex',
+						alignItems: 'center',
+					}}
+				>
 					<div className='nav-left'>
 						{/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
 						<div
@@ -129,30 +139,41 @@ export const HeaderNav: FC<{ isMobile: boolean }> = ({ isMobile }) => {
 							)} */}
 						</div>
 					</div>
-							<h1 style={{ margin: 0, padding: 0, position: 'absolute', left: 16 }}>Beren Qorgan Antidrone</h1>
-					<div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flex: 1 }}>
+					<h1 style={{ margin: 0, padding: 0, position: 'absolute', left: 16 }}>
+						Beren Qorgan Antidrone
+					</h1>
+					<div
+						style={{
+							display: 'flex',
+							gap: '1.5rem',
+							justifyContent: 'center',
+							flex: 1,
+						}}
+					>
 						<Link
-							to="/app/map"
+							to='/app/map'
 							style={{
 								fontSize: '1.2rem',
 								fontWeight: 500,
 								color: location.pathname === '/app/map' ? '#1890ff' : '#000',
 							}}
 						>
-							Карта
+							{Message.map[lang]}
 						</Link>
 						<Link
-							to="/app/incidents"
+							to='/app/incidents'
 							style={{
 								fontSize: '1.2rem',
 								fontWeight: 500,
-								color: location.pathname === '/app/incidents' ? '#1890ff' : '#000',
+								color:
+									location.pathname === '/app/incidents' ? '#1890ff' : '#000',
 							}}
 						>
-							Инциденты
+							{Message.incidents[lang]}
 						</Link>
 					</div>
 					<div className='nav-right'>
+						<LangToggle />
 						<NavProfile data={title} />
 					</div>
 				</div>

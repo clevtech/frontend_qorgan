@@ -14,7 +14,7 @@ const Cameras = () => {
 	const [selectedChild, setSelectedChild] = useState('')
 	const [isCurrent, setIsCurrent] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
-	const [cameraSize, setCameraSize] = useState('Маленькие значки')
+	const [caeraSize, setCameraSize] = useState('Маленькие значки')
 
 	useEffect(() => {
 		EmployeeService.getEmployeesChild({

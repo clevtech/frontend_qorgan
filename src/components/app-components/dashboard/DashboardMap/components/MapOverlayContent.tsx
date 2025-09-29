@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { useMap } from 'react-leaflet'
 import useWebSocket from 'react-use-websocket'
 import { centerKazakhstan } from '../constants/mapConstants'
+import { WEBSOCKET_BASE_URL } from '@/configs/AppConfig'
 
 const getDroneStyle = (angleDeg: number, distance: number) => {
 	const offset = ((distance - 100) / 900) * 615 // можно подогнать под твою карту
@@ -55,7 +56,7 @@ const MapOverlayContent = () => {
 	const [scale, setScale] = useState(1)
 
 	const { lastMessage } = useWebSocket(
-		`wss://${window.location.hostname}/backend/ws/statuses/`,
+		`${WEBSOCKET_BASE_URL}/backend/ws/statuses/`,
 		{
 			onOpen: () => console.log('WebSocket connection opened'),
 			onClose: () => console.log('WebSocket connection closed'),

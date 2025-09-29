@@ -11,8 +11,6 @@ import { useBodyClass } from '@/utils/hooks/useBodyClass'
 export const Views = () => {
 	const { direction, locale } = useSelector((state: RootState) => state.theme)
 
-	const currentAppLocale = resources[locale as keyof typeof resources]
-
 	useBodyClass(`dir-${direction}`)
 
 	useEffect(() => {
@@ -28,7 +26,7 @@ export const Views = () => {
 	return (
 		<ConfigProvider
 			direction={direction as DirectionType}
-			locale={currentAppLocale.antd}
+		
 		>
 			<Routes />
 		</ConfigProvider>
