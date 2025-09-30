@@ -50,3 +50,6 @@ Thumbs.db
 # dotenv environment variable files
 .env
 .env.*
+kazakhstan.pmtiles
+# pmtiles
+pmtiles/``

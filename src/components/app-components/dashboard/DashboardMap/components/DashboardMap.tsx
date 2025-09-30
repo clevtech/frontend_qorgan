@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import { MapContainer, SVGOverlay, TileLayer, useMap } from 'react-leaflet'
 import { centerKazakhstan } from '../constants/mapConstants'
 
-import useWebSocket from 'react-use-websocket'
 import { WEBSOCKET_BASE_URL } from '@/configs/AppConfig'
+import useWebSocket from 'react-use-websocket'
 
 const MapResizer = ({ visible }: { visible: boolean }) => {
 	const map = useMap()
@@ -51,7 +51,7 @@ export const DashboardMap = (props: any) => {
 		} else {
 			setSocketUrl(
 				props.switched
-						? `${WEBSOCKET_BASE_URL}/backend/ws/statuses_demo/`
+					? `${WEBSOCKET_BASE_URL}/backend/ws/statuses_demo/`
 					: `${WEBSOCKET_BASE_URL}/backend/ws/statuses/`
 			)
 		}

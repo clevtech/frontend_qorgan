@@ -11,10 +11,9 @@ export const IP_ADDRESS = window.location.hostname + ':8008'
 export const APP_NAME = 'UmAI Army Safety'
 
 export const API_BASE_URL = 'https://' + window.location.hostname + ':443'
-
 // export const API_BASE_URL = 'http://192.168.1.249:8080'
 
-export const WEBSOCKET_BASE_URL = `wss://${IP_ADDRESS}/ws`
+export const WEBSOCKET_BASE_URL = `wss://${window.location.hostname}`
 
 export const APP_PREFIX_PATH = '/app'
 export const AUTH_PREFIX_PATH = '/auth'

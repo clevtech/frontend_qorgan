@@ -1,5 +1,5 @@
 import fetch from '@/api/FetchInterceptor'
-import { DashboardMap } from '@/components/app-components/dashboard/DashboardMap/components/DashboardMap'
+import MapKZ from '@/components/app-components/Map-KZ/MapKZ'
 import { WEBSOCKET_BASE_URL } from '@/configs/AppConfig'
 import { Message } from '@/lang/Message'
 import { QorganService } from '@/services/QorganService'
@@ -40,6 +40,7 @@ const Incidents = () => {
 	const [objects, setObjects] = useState<Object[]>([])
 	const [isSwitched, setIsSwitched] = useState(false)
 	const [isAddObject, setIsAddObject] = useState(false)
+	const [focusObject, setFocusObject] = useState<Object | null>(null)
 	const objectsScrollRef = useRef<HTMLDivElement | null>(null)
 	const scrollObjectsBy = (dx: number) => {
 		if (objectsScrollRef.current) {
@@ -47,19 +48,8 @@ const Incidents = () => {
 		}
 	}
 	const handleShowOnMap = (obj: any) => {
-		try {
-			window.dispatchEvent(
-				new CustomEvent('dashboardmap:focus', {
-					detail: {
-						latitude: obj.latitude,
-						longitude: obj.longitude,
-						name: obj.name,
-					},
-				})
-			)
-		} catch (e) {
-			console.log('focus event error', e)
-		}
+		console.log('🎯 Показываем объект на карте:', obj.name)
+		setFocusObject(obj)
 	}
 	const lang = (localStorage.getItem('lang') || 'ru') as 'en' | 'ru' | 'kk'
 
@@ -388,7 +378,12 @@ const Incidents = () => {
 								)}
 							</div>
 						</div>
-						<DashboardMap switched={isSwitched} />
+						{/* <DashboardMap switched={isSwitched} /> */}
+						<MapKZ
+							isSwitched={isSwitched}
+							objects={objects}
+							focusObject={focusObject}
+						/>
 
 						<div className='flex justify-between'>
 							{modules?.map((module: any, index: number) => (
